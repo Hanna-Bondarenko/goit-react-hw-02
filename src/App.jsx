@@ -1,35 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import { useState } from 'react'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
+// import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// src/App.jsx
+import { useState, useEffect } from 'react';
+import Feedback from './components/ Feedback/ Feedback.jsx';
+import Options from './components/Options/Options.jsx';
+import Statistics from './components/Statistics/Statistics.jsx';
+import Notification from './components/ Notification/Notification.jsx';
+import './App.css';
+
+const App = () => {
+  const [feedbacks, setFeedbacks] = useState({
+    good: 0,
+    neutral: 0,
+    bad: 0,
+  });
+
+  const updateFeedback = type => {
+    setFeedbacks(prevFeedbacks => ({
+      ...prevFeedbacks,
+      [type]: prevFeedbacks[type] + 1,
+    }));
+  };
+
+  const totalFeedback = feedbacks.good + feedbacks.neutral + feedbacks.bad;
+
+  const positiveFeedbackPercentage = totalFeedback
+    ? Math.round((feedbacks.good / totalFeedback) * 100)
+    : 0;
+
+  const resetFeedback = () => {
+    setFeedbacks({ good: 0, neutral: 0, bad: 0 });
+  };
+
+  useEffect(() => {
+    const savedFeedbacks = JSON.parse(window.localStorage.getItem('feedbacks'));
+    if (savedFeedbacks) {
+      setFeedbacks(savedFeedbacks);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+  }, [feedbacks]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+    <div className="app">
+      <h1>Sip Happens Café</h1>
+      <p>
+        Please leave your feedback about our service by selecting one of the
+        options below.
       </p>
-    </>
-  )
-}
+      <Options updateFeedback={updateFeedback} />
+      {totalFeedback > 0 ? (
+        <>
+          <Feedback feedbacks={feedbacks} />
+          <Statistics
+            totalFeedback={totalFeedback}
+            positivePercentage={positiveFeedbackPercentage}
+            resetFeedback={resetFeedback}
+          />
+        </>
+      ) : (
+        <Notification message="No feedback given" />
+      )}
+    </div>
+  );
+};
 
-export default App
+export default App;

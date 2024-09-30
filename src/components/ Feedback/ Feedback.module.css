@@ -1,0 +1,10 @@
+/* src/components/Feedback/Feedback.module.css */
+.feedbackList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.feedbackItem {
+  margin: 10px 0;
+  font-size: 18px;
+}
