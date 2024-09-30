@@ -3,19 +3,17 @@
 // import viteLogo from '/vite.svg'
 // import './App.css'
 
-// src/App.jsx
 import { useState, useEffect } from 'react';
+import Description from './components/Description/Description.jsx';
 import Feedback from './components/ Feedback/ Feedback.jsx';
 import Options from './components/Options/Options.jsx';
-import Statistics from './components/Statistics/Statistics.jsx';
 import Notification from './components/ Notification/Notification.jsx';
 import './App.css';
 
 const App = () => {
-  const [feedbacks, setFeedbacks] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
+  const [feedbacks, setFeedbacks] = useState(() => {
+    const savedFeedbacks = JSON.parse(window.localStorage.getItem('feedbacks'));
+    return savedFeedbacks || { good: 0, neutral: 0, bad: 0 };
   });
 
   const updateFeedback = type => {
@@ -36,31 +34,24 @@ const App = () => {
   };
 
   useEffect(() => {
-    const savedFeedbacks = JSON.parse(window.localStorage.getItem('feedbacks'));
-    if (savedFeedbacks) {
-      setFeedbacks(savedFeedbacks);
-    }
-  }, []);
-
-  useEffect(() => {
     window.localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
   }, [feedbacks]);
 
   return (
     <div className="app">
       <h1>Sip Happens Café</h1>
-      <p>
-        Please leave your feedback about our service by selecting one of the
-        options below.
-      </p>
-      <Options updateFeedback={updateFeedback} />
+      <Description />
+      <Options
+        updateFeedback={updateFeedback}
+        totalFeedback={totalFeedback}
+        resetFeedback={resetFeedback}
+      />
       {totalFeedback > 0 ? (
         <>
-          <Feedback feedbacks={feedbacks} />
-          <Statistics
+          <Feedback
+            feedbacks={feedbacks}
             totalFeedback={totalFeedback}
-            positivePercentage={positiveFeedbackPercentage}
-            resetFeedback={resetFeedback}
+            positiveFeedbackPercentage={positiveFeedbackPercentage}
           />
         </>
       ) : (

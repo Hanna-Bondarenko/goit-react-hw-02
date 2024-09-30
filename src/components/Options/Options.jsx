@@ -1,7 +1,6 @@
-// src/components/Options/Options.jsx
 import styles from './Options.module.css';
 
-const Options = ({ updateFeedback }) => {
+const Options = ({ updateFeedback, totalFeedback, resetFeedback }) => {
   return (
     <div className={styles.options}>
       <button className={styles.button} onClick={() => updateFeedback('good')}>
@@ -16,8 +15,12 @@ const Options = ({ updateFeedback }) => {
       <button className={styles.button} onClick={() => updateFeedback('bad')}>
         Bad
       </button>
+      {totalFeedback > 0 && (
+        <button className={styles.button} onClick={resetFeedback}>
+          Reset
+        </button>
+      )}
     </div>
   );
 };
-
 export default Options;
